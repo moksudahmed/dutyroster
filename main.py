@@ -38,31 +38,36 @@ def swap(arr,a,b, limit):
                 arr[a[i]][j] = 0  
                 twod_list.append(j)              
                 print("F",arr[a[i]][j],"{",a[i],"C",j,"}",arr[a[i]])
-        
-    for j in range(len(b)):
-        for i in range(len(twod_list)):
-            if i == twod_list[i]:
-                if arr[b[j]][twod_list[i]] ==1:
-                    arr[b[j]][twod_list[i]+1] = 1
-                else:    
+    count = 0
+    print("Test",twod_list)
+    for j in range(len(b)):       
+        for i in range(len(twod_list)):                        
+           # if i == twod_list[i]:                                
+                if arr[b[j]][twod_list[i]] != 1 and calculate(arr[b[j]]) <= limit:                    
                     arr[b[j]][twod_list[i]] = 1
-                print(b[j],twod_list[i], end=' ')
-                print()
-    pos = 0
-    
+                    count +=1                
+                else:    
+                    arr[b[j]][twod_list[i]+1] = 1
+                    count +=1                
+          #  print(twod_list[i], end=' ')
+           # print()
+            #print(i)
+    print(count)
+ #   for i in range(count):
+ #        print(twod_list[i+count])
+  #       arr[i][i+count] = 1
     return arr
 
 limit = 3
 a = [3,5,6]
 b = [0,4]
-arr = [[0,1,0,0,0,1,0,0,0,0],
+arr = [[0,0,0,0,0,1,0,0,1,0],
        [0,0,0,1,0,1,0,0,0,1],
        [0,1,0,1,0,0,0,1,0,0],
        [0,0,0,1,0,0,1,1,0,1],
        [0,0,0,1,0,1,0,0,0,0],
-       [0,0,0,1,0,1,0,0,1,1],
-       [1,0,0,1,0,1,0,1,0,1],
-    ]
+       [0,1,0,1,0,1,0,0,1,1],
+       [1,0,0,1,0,1,0,1,0,1],]
 for row in range(len(arr)):
     print(arr[row],calculate(arr[row]))
 arr =  swap(arr,a,b, limit)
