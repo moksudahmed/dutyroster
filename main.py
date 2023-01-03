@@ -18,7 +18,6 @@ def swap2(arr,a,b, limit):
                         if arr[a[x]][j] == 1 and calculate(arr[i]) <= limit:
                             arr[a[x]][j] = 0 
                             arr[b[x]][j] = 1
-                            print("Found",a[x])
                     #    print(i)
                     #if j<=len(b):                
                     #    arr[a[0][j]][a[0][j]] = 0
@@ -26,10 +25,15 @@ def swap2(arr,a,b, limit):
                         
            
     return arr
+
+def find(arr,y):
+    for i in range(len(arr)):
+        if arr[i][y] == 0:            
+           return i
+    return 0
+
 def swap(arr,a,b, limit):
-    print(b)    
     twod_list = []    
-    print("============")
     for i in range(len(a)):
         
         for j in range(len(arr[a[i]])):
@@ -37,25 +41,24 @@ def swap(arr,a,b, limit):
             if calculate(arr[a[i]]) > limit:
                 arr[a[i]][j] = 0  
                 twod_list.append(j)              
-                print("F",arr[a[i]][j],"{",a[i],"C",j,"}",arr[a[i]])
-    count = 0
-    print("Test",twod_list)
+    pos = 0
+
     for j in range(len(b)):       
-        for i in range(len(twod_list)):                        
-           # if i == twod_list[i]:                                
-                if arr[b[j]][twod_list[i]] != 1 and calculate(arr[b[j]]) <= limit:                    
-                    arr[b[j]][twod_list[i]] = 1
-                    count +=1                
-                else:    
-                    arr[b[j]][twod_list[i]+1] = 1
-                    count +=1                
-          #  print(twod_list[i], end=' ')
-           # print()
-            #print(i)
-    print(count)
- #   for i in range(count):
- #        print(twod_list[i+count])
-  #       arr[i][i+count] = 1
+        arr[b[j]][twod_list[pos]] = 1
+        pos +=1
+    i = 0
+    
+    if pos < len(twod_list):
+        while True:
+            if pos >= len(twod_list):
+                break
+            else:
+                if calculate(arr[pos]) <= limit:
+    #                print("F",pos, twod_list[pos],find(arr,twod_list[pos]))
+                    arr[find(arr,twod_list[pos])][twod_list[pos]] = 1
+                print(pos,twod_list[pos])
+                pos +=1 
+                i +=1
     return arr
 
 limit = 3
