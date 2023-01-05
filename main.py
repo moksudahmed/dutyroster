@@ -25,7 +25,11 @@ def swap2(arr,a,b, limit):
                         
            
     return arr
-
+def get_next_point(arr):
+    for i in range(len(arr)):
+        if arr[i] == 0:            
+           return i
+    return 0
 def find(arr,y):
     for i in range(len(arr)):
         if arr[i][y] == 0:            
@@ -34,6 +38,10 @@ def find(arr,y):
 
 def swap(arr,a,b, limit):
     twod_list = []    
+    arr_sum = sum(list(map(sum, arr)))
+    print("Before",arr_sum)    
+    print(b)
+    # Delete instance from extra entry
     for i in range(len(a)):
         
         for j in range(len(arr[a[i]])):
@@ -42,33 +50,47 @@ def swap(arr,a,b, limit):
                 arr[a[i]][j] = 0  
                 twod_list.append(j)              
     pos = 0
-
-    for j in range(len(b)):       
-        arr[b[j]][twod_list[pos]] = 1
-        pos +=1
-    i = 0
-    
-    if pos < len(twod_list):
-        while True:
-            if pos >= len(twod_list):
-                break
+    # Insert instance for shortage entry
+   # print(twod_list)
+    while pos < len(twod_list):
+        for j in range(len(b)): 
+            if arr[b[j]][twod_list[pos]] == 1:
+                #print("Already Exist",arr[b[j]][twod_list[pos]],get_next_point(arr[b[j]]))            
+                arr[b[j]][get_next_point(arr[b[j]])] = 1
+                print("p1",b[j],twod_list[pos])
+                pos +=1
             else:
-                if calculate(arr[pos]) <= limit:
-    #                print("F",pos, twod_list[pos],find(arr,twod_list[pos]))
-                    arr[find(arr,twod_list[pos])][twod_list[pos]] = 1
-                print(pos,twod_list[pos])
-                pos +=1 
-                i +=1
+                arr[b[j]][twod_list[pos]] = 1                
+                print("p2",b[j],twod_list[pos])
+                pos +=1
+        if calculate([b[j]]) < limit:
+            break
+          #  if pos < len(twod_list):break   
+    
+    i = 0
+    while pos < len(twod_list) and i<len(arr):        
+        if arr[i][twod_list[pos]] == 1:            
+            arr[i][get_next_point(arr[i])] = 1
+          #  print("p1",i,twod_list[pos],get_next_point(arr[i]))
+            pos +=1
+        else:
+            arr[i][twod_list[pos]] = 1            
+        #    print("p2",i,twod_list[pos])
+            pos +=1
+        i +=1
+    result = list(map(sum, arr))    
+    print("After",sum(result))
+   
     return arr
 
 limit = 3
 a = [3,5,6]
-b = [0,4]
-arr = [[0,0,0,0,0,1,0,0,1,0],
+b = [0,2,4]
+arr = [[0,0,0,0,1,1,0,0,0,0],
        [0,0,0,1,0,1,0,0,0,1],
-       [0,1,0,1,0,0,0,1,0,0],
+       [0,0,0,1,0,0,0,1,0,0],
        [0,0,0,1,0,0,1,1,0,1],
-       [0,0,0,1,0,1,0,0,0,0],
+       [0,0,0,0,0,1,0,0,0,0],
        [0,1,0,1,0,1,0,0,1,1],
        [1,0,0,1,0,1,0,1,0,1],]
 for row in range(len(arr)):
