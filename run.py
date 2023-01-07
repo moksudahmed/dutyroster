@@ -2,6 +2,10 @@ from numpy import *
 import numpy as np
 import random
 from copy import copy, deepcopy
+import swaparray
+import xl
+import xlwt
+from xlwt import Workbook
 
 def countNumber(a):
     count = 0
@@ -125,6 +129,7 @@ def drawCol(arr,rows,cols, limit, individual):
             
             for row in range(rows):
                 arr[row][col] = a[row]
+                arr = rearangeRow(arr,rows,cols, shifts, individual)
              #   arr = draw(arr,rows,cols,individual) 
     return arr
 
@@ -166,45 +171,111 @@ def find_lower_value(arr, rows, cols, individual):
     a.insert(0,a1)
     a.insert(1,a2)
     return a
+def find_higher(arr, rows, cols, individual):
+    a = [] 
+    
+    for row in range(rows):
+       if swaparray.calculate(arr[row]) > individual:
+            a.append(row)
+            
+    return a
+
+def find_lower(arr, rows, cols, individual):
+    a = [] 
+    for row in range(rows):
+       if swaparray.calculate(arr[row]) < individual:
+            a.append(row)
+    return a
+
 def rearangeRow(arr,rows,cols, shifts, individual):
     a = [] 
     b = []
-    a = find_higher_value(arr, rows, cols, individual)
-    b = find_lower_value(arr, rows, cols, individual)
-    
-    print("High:", a)    
+    t = []
+    a = find_higher(arr, rows, cols, individual)
+    b = find_lower(arr, rows, cols, individual)
+   # print("h",a)
+   # print("l",b)
+    arr =  swaparray.swaparray(arr,a,b, individual)
+    #print("---------------")
+    #print(np.matrix(arr))
+    #print(b[0])
+    #print("---------------")
+    """ print("High:", a)    
     print("Low:", b)
     print(a[0][0],":",a[1][0], b[0][0],":",b[1][0])
     print("a:", arr[a[0][0]])
     print("b:",arr[b[0][0]])
     print("---",len(a[0]), len(b[0]))
-   
-    if len(a[0]) > len(b[0]):
-        for c in range(0,1):
-            for r in range(len(a[c])):            
-               # print(arr[a[0][r]], end = " ")
-               if r < len(b[0]):
-                arr = swap(arr,arr[a[0][r]],a[0][r],arr[b[0][r]],b[0][r],cols, individual)    
-   
-                print()
-    else:
-        for c in range(0,1):
-            for r in range(len(b[c])):            
-                print(b[0][r],b[1][r], end = " ")
-                print()
-    
-    print("a:",arr[a[0][0]])
-    print("b:",arr[b[0][0]])
+    """
     
     return arr
+def insert_column(arr, column, pos):
+    for i in range(len(arr)):
+        arr[i][pos] = column[i]
+    return arr
 
-total_person = 20
+def rearangeCol(arr,column, pos, diff, limit, individual):
+   # print("pos",pos, diff, column, limit)
+    for i in range(diff):   
+     #   print("i",i,pos)
+        for j in range(len(column)):
+            #print(column[j], swaparray.calculate(column))
+            k = 0 
+            if swaparray.calculate(column) >= limit:
+                if swaparray.calculate(arr[i]) > individual: 
+                  #  print(i,swaparray.calculate(arr[i]),individual)
+                
+                    if column[j] == 1:
+                       column[j] = 0  
+                
+    arr = insert_column(arr, column, pos)            
+   # print("A C",column, limit)    
+   # print("===============")
+   # display_matrix(arr)
+    return arr
+
+def findDifference(arr, shifts, col, individual):
+    pos = 0
+    for i in range(len(shifts)):
+        if shifts[i] != col[i]:
+            if shifts[i] > col[i]:
+              #  print("s",shifts[i]-col[i])
+                arr = rearangeCol(arr,get_column(arr,pos), pos, shifts[i]-col[i], shifts[i], individual)
+            else:
+            #deff[pos] = col[i]
+                arr = rearangeCol(arr,get_column(arr,pos), pos, col[i]-shifts[i], shifts[i], individual)
+             #   print("c",col[i]-shifts[i])
+        pos +=1
+    return arr
+def get_column(arr,pos):
+    a = []
+    for i in range(len(arr)):
+        a.append(arr[i][pos])
+    return a
+def colsum(arr, n, m):
+    a = []
+    for i in range(n):
+        su = 0
+        for j in range(m):
+            su += arr[j][i]
+        a.append(su)
+        #print(" ",su, end = "")
+    return a        
+def display_matrix(arr):
+    for row in range(len(arr)):
+        print(arr[row],swaparray.calculate(arr[row]))
+    col_total = colsum(arr, len(arr[0]), len(arr))
+    print(col_total)
+
+total_person = 56
+shifts = [24,24,40,29,24,15,40,29,24,24,40,15,24,24,40,29,24,15,40,29,24,24,40,29,14,24,40,29,21,15]
 pershift_instance = 8
-total_shits = 8
-total_instance = pershift_instance * total_shits
+total_shits = 30
+total_instance = sum(shifts)  #pershift_instance * total_shits
 individual = round(total_instance / total_person)
 array_size_x = total_person
 array_size_y = total_shits
+print(total_instance)
 print(total_person,individual, total_instance)
 # Python 3 program to demonstrate working
 # of method 1 and method 2.
@@ -214,33 +285,40 @@ rows, cols = (array_size_x, array_size_y)
 arr = [[0]*cols]*rows
 # lets change the first element of the
 # first row to 1 and print the array
-shifts = [8,7,6,6,10,8,8,7]
+
 
 x = 0
 
 total_cols = 0
+col_total = []
+arr = [[random.randint(0,1) for i in range(cols)] for j in range(rows)]
+print(np.matrix(arr))
+col_total = colsum(arr, len(arr[0]), len(arr))
+print(col_total)
+
+#while True:
+#arr = drawCol(arr,rows,cols,shifts, individual) #pershift_instance
+display_matrix(arr)
 while True:
     arr = [[random.randint(0,1) for i in range(cols)] for j in range(rows)]
 
-    #arr = draw(arr,rows,cols,individual)
-    #a = calculateTotalInstanceinCol(arr,rows,cols)
-    #arr = modify_array(arr, a, rows, cols)
+    arr = rearangeRow(arr,rows,cols, shifts, individual)
+    #display_matrix(arr)
 
-   # print(np.matrix(arr))
+    #print(shifts)
 
-    arr = drawCol(arr,rows,cols,shifts, individual) #pershift_instance
-    col_total = calculateTotalInstanceinCol(arr,rows,cols)
-    row_total =  calculateTotalInstanceinRow(arr,rows,cols)
-    arr = modify_array(arr, col_total, rows, cols)
-    
-    total = row_total + arr[rows:,cols]
-    
-    total_cols = arr[rows:,cols]
-    print(np.matrix(arr))
-    print(rearangeRow(arr,rows,cols, shifts, individual))
-    
-    #print(np.matrix(arr))
-    if total_cols <= total:
-        break
-    
-#print(np.matrix(arr))
+    arr = findDifference(arr, shifts, col_total, individual)
+    #display_matrix(arr)
+
+    #arr = findDifference(arr, shifts, col_total, individual)
+    #display_matrix(arr)
+
+    result = list(map(sum, arr))    
+    if sum(result) == sum(list(map(sum, shifts))):break
+
+display_matrix(arr)
+print(sum(result))
+total = colsum(arr, len(arr[0]), len(arr))
+print("Shifts",sum(list(map(sum, shifts))))
+# Export data to excel sheet
+xl.export_to_xl(arr, rows, cols, total)

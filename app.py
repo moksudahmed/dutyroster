@@ -2,6 +2,13 @@ from numpy import *
 import numpy as np
 import random
 
+def combiend(arr, n=30):
+    val = [0]*n
+    for i in range (len(arr)):
+            val[i] = arr[i]
+          #  print(val)
+    return val
+
 
 def find(shits, days, n):
     val = [0] * n
@@ -14,6 +21,37 @@ def find(shits, days, n):
 def _next(l, target):
     return next((i for i in l if i == target), None)
 
+def get_random(list, n):
+    val =[0] * n
+    i = 0
+    l = -0
+    val[0] = random.choice(list)
+    for i in range(0,n):
+        l = random.choice(list)
+        if _next(val, int(l)) == None:
+            val[i] = 1
+            l = -0
+        else:
+            val[i] = 0
+        i +=1                    
+   # val.sort()    
+    return val
+
+def get_random2(list, n):
+    val =[0] * n
+    i = 0
+    l = -0
+    val[0] = random.choice(list)
+    for i in range(0,n):
+        l = random.choice(list)
+        if _next(val, int(l)) == None:
+            val[i] = 1
+            l = -0
+        else:
+            val[i] = 0
+        i +=1                    
+   # val.sort()    
+    return val
 
 def countNumber(a):
     count = 0
@@ -31,7 +69,6 @@ def countNumberRow(a):
 
 def calculateTotalCol(a):
     n = 30
-   # print(a)
     count = 0          
     for i in range(len(a)):
         if a[i] == 1:
@@ -70,15 +107,15 @@ def clculateRow(a):
 
 # Function for Re-arrange thr every column of the matrix with define limits 
   
-def rearangeRow(a,row_size, col_size,limit):
-    n = row_size   
-    for col in range(col_size):
+def rearangeRow(a, limit):
+    n = 30   
+    for col in range(10):
         val =[0] * n    
         if countNumberRow(a[:,col]) != limit:
             while countNumberRow(val) != limit:
-                for i in range(row_size):
+                for i in range(30):
                     val[i] = random.randint(0,1)
-            for row in range(row_size):
+            for row in range(30):
                     a[row:,col] = val[row]
     return a
 
@@ -96,10 +133,10 @@ def getNumber(limit):
     return a
 
 # Function for Re-arrange thr every row of the matrix with define limits 
-def rearangeColumn(arr,row_size, col_size, limit):
-    for row in range(row_size):
+def rearangeColumn(arr, limit):
+    for row in range(30):
             val = getNumber(limit)
-            for col in range(col_size):
+            for col in range(10):
                 arr[row:,col] = val[col]         
             col = col+1
             arr[row:,col] = calculateTotalCol(val)
@@ -107,67 +144,43 @@ def rearangeColumn(arr,row_size, col_size, limit):
         #print(clculateRow(arr))
     return arr
         
-def getRowTotal(arr, row_size, col_size):
-    temp = clculateRow(arr)
-    total_row = 0
-    for x in range(col_size):
-        arr[row_size:,x] = temp[x]
-        total_row += temp[x]
-    return total_row
-
-def getColoumnTotal(arr, row_size, col_size):
-    temp = clculateColumn(arr)
-    total_col = 0
-    for x in range(row_size):
-        arr[x:,col_size] = temp[x]
-        total_col += temp[x]
-    return total_col
-
-def draw_matrix(a,perday, individual):
-    getNumber(individual)
-
 def get_matrix(arr, row_size, col_size,total_instance, perday, individual):
     n = col_size
     val =[0] * n
     x = 1
     for x in range(col_size):
-        arr = np.insert(arr, x, random.randint(0,1) , axis=1)
-    
+        arr = np.insert(arr, x, 1 , axis=1)
     #arr = np.insert(a, 1, 5, axis=1)
-    print("A",arr[0][0])
-    count = 0
-    for i in range(len(arr[0])):
-        if arr.any == 1:
-            count += 1   
-    
-    for i in range(len(arr[1][0])):
-        print("Test")
     for x in range(row_size):
-        while True:            
-            for y in range(col_size):
-                arr[x:,y] = random.randint(0,1)    
-            if calculateTotalCol(arr[0:,0]) != individual:
-                break
-    print(calculateTotalCol(arr[:,2]))
+        arr[x][0] = random.randint(0,row_size)
     
-    #for x in range(row_size):
-    #rearangeRow(arr,row_size, col_size,perday)
-    #rearangeColumn(arr,row_size, col_size, individual)
-    total_col = getColoumnTotal(arr, row_size, col_size)    
-    total_row = getRowTotal(arr, row_size, col_size)
-
-    total = total_row + total_col
-    arr[row_size:,col_size] = total          
-    print(arr)          
-    #total_col = getColoumnTotal(arr, row_size, col_size)    
-    #total_row = getRowTotal(arr, row_size, col_size)
+    total = 0
+    while total_instance!= total:
+        # Re-arrange thr every column of the matrix with define limits 
+        arr = rearangeRow(arr, perday)
     
-    #total = total_row + total_col
+        # Re-arrange thr every row of the matrix with define limits 
+        arr = rearangeColumn(arr, individual)
+        
+        # Calculate Total Number of instance in a coloumn and insert in the last row #
+        temp = clculateRow(arr)
+        total_row = 0
+        for x in range(col_size):
+            arr[row_size:,x] = temp[x]
+            total_row += temp[x]
         
         # Calculate Total Number of instance in every row and insert in the last column #
-    #print(total_col, total_row)
+        temp = clculateColumn(arr)
+        total_col = 0
+        for x in range(row_size):
+            arr[x:,col_size] = temp[x]
+            total_col += temp[x]
+
         # Calculate Total Number of instance in the Matrix#
-    #arr[row_size:,col_size] = total   
+        total = total_row + total_col
+    
+    arr[row_size:,col_size] = total
+    print(arr)
     return arr
 
 
@@ -205,4 +218,31 @@ arr = np.matrix(31*[1*[0]])
 
 print(individual)
 
-get_matrix(arr, array_size_x, array_size_y,total_instance, perday_instance, individual)
+print(get_matrix(arr, array_size_x, array_size_y,total_instance, perday_instance, individual))
+
+list1 = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]
+
+"""
+for row in range(1, 5):
+    for col in range(10):
+        matrix[row][col] = get_random(list1, 5) 
+"""
+#random_list = get_random(list1, 10)
+#arr = np.insert(arr, 0, range(1,31) , axis=1)
+"""arr = np.insert(arr, 1, get_random(list1, 30) , axis=1)
+arr = np.insert(arr, 2, get_random(list1, 30) , axis=1)
+arr = np.insert(arr, 3, get_random(list1, 30) , axis=1)
+arr = np.insert(arr, 4, get_random(list1, 30) , axis=1)
+arr = np.insert(arr, 5, get_random(list1, 30) , axis=1)
+"""
+"""if (row % 2 == 0):
+                if (col % 2 == 0):            
+                    arr[row:,col] = 1
+                else:
+                    arr[row:,col] = 0            
+            else:
+                if (col % 2 == 0):            
+                    arr[row:,col] = 0
+                else:
+                    arr[row:,col] = 1"""
+#print(arr)
